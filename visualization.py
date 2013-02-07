@@ -9,8 +9,8 @@ GRID_COLOR = "white"
 
 COLORS = ["red", "green", "blue", "white", "yellow", "orange", "pink", "purple", "gray", "cyan"]
 
-def get_solution(level, valuation):
-    size = (GRID_SIZE * level.rows, GRID_SIZE * level.cols)
+def get_solution(level, valuation, showdist = False):
+    size = (GRID_SIZE * level.cols, GRID_SIZE * level.rows)
     img = Image.new('RGB', size)
     draw = ImageDraw.Draw(img)
     draw.rectangle((0, 0, size[0], size[1]), fill = BACKGROUND_COLOR)
@@ -24,7 +24,9 @@ def get_solution(level, valuation):
     # Draw valuation
     for x in range(level.cols):
         for y in range(level.rows):
-            c,t = valuation[y][x]
+            c,t = valuation[y][x][0]
+
+            d = valuation[y][x][1]
 
             color = COLORS[c % len(COLORS)]
             cx, cy = [i * GRID_SIZE + GRID_SIZE / 2 for i in [x, y]]
@@ -40,4 +42,12 @@ def get_solution(level, valuation):
                     draw.line((cx, cy, cx, cy + GRID_SIZE/2), fill = color)
                 if t in [1, 5, 6]: # left
                     draw.line((cx, cy, cx - GRID_SIZE/2, cy), fill = color)
+
+            if showdist:
+                draw.text((cx-1, cy), str(d), fill = 'black')
+                draw.text((cx+1, cy), str(d), fill = 'black')
+                draw.text((cx, cy-1), str(d), fill = 'black')
+                draw.text((cx, cy+1), str(d), fill = 'black')
+                draw.text((cx, cy), str(d), fill = 'white')
+
     return img

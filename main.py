@@ -7,18 +7,19 @@ from visualization import get_solution
 from subprocess import call
 from pprint import pprint
 from os.path import splitext
+from gc import collect
 
 from pprint import pprint
 
 SAT_PATH = 'work/MiniSat_v1.14_cygwin.exe'
 
-def solve_file(path):
+def solve_file(path, dist = False):
     print('Reading level from', path)
     level = Level()
     level.load_from_file(path)
 
     print('Generating clauses ...')
-    clauses = sat_get_clauses(level)
+    clauses = sat_get_clauses(level, dist)
     print('Got %d clauses' % len(clauses))
 
     pathparts = splitext(path)
@@ -28,6 +29,10 @@ def solve_file(path):
 
     print('Writing to file ...')
     map = sat_write_clauses(clauses, pathin)
+
+    # Release some memory
+    clauses = []
+    collect()
 
     print('Running SAT solver ...')
     call([SAT_PATH, pathin, pathout])
@@ -39,16 +44,19 @@ def solve_file(path):
         print('Unsatisfiable ...')
         return
 
+    #pprint(val)
+
     print('Displaying solution ...')
-    img = get_solution(level, val)
+    img = get_solution(level, val, dist)
     img.show()
     img.save(pathsol)
 
 def main():
+    #solve_file('levels/test1.txt')
     #solve_file('levels/flow_free_8_8_150.txt')
     #solve_file('levels/flow_free_14_14_1.txt')
     #solve_file('levels/flow_free_14_14_2.txt')
-    solve_file('levels/flow_free_14_14_30.txt')
+    solve_file('levels/flow_free_14_14_30.txt', dist = True)
 
 if __name__ == '__main__':
     main()
