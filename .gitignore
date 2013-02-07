@@ -1,0 +1,7 @@
+levels/*.sat_in.txt
+levels/*.sat_out.txt
+
+work/*
+
+*.pyc
+.idea/*
