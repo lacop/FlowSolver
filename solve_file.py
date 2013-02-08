@@ -53,10 +53,11 @@ def solve_file(path, dist = False):
 
 def main():
     #solve_file('levels/test1.txt')
-    #solve_file('levels/flow_free_8_8_150.txt')
+    solve_file('levels/flow_free_8_8_150.txt')
     #solve_file('levels/flow_free_14_14_1.txt')
     #solve_file('levels/flow_free_14_14_2.txt')
-    solve_file('levels/flow_free_14_14_30.txt', dist = True)
+    #solve_file('levels/flow_free_14_14_30.txt', dist = False)
+    pass
 
 if __name__ == '__main__':
     main()

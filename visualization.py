@@ -6,10 +6,11 @@ DOT_RADIUS = 20
 GRID_WIDTH = 1
 BACKGROUND_COLOR = "black"
 GRID_COLOR = "white"
+LINE_RADIUS = 5
 
 COLORS = ["red", "green", "blue", "white", "yellow", "orange", "pink", "purple", "gray", "cyan"]
 
-def get_solution(level, valuation, showdist = False):
+def get_solution(level, valuation, showdist = False, colormap = None):
     size = (GRID_SIZE * level.cols, GRID_SIZE * level.rows)
     img = Image.new('RGB', size)
     draw = ImageDraw.Draw(img)
@@ -25,23 +26,25 @@ def get_solution(level, valuation, showdist = False):
     for x in range(level.cols):
         for y in range(level.rows):
             c,t = valuation[y][x][0]
-
             d = valuation[y][x][1]
 
-            color = COLORS[c % len(COLORS)]
             cx, cy = [i * GRID_SIZE + GRID_SIZE / 2 for i in [x, y]]
+
+            color = COLORS[c % len(COLORS)]
+            if colormap is not None:
+                color = colormap[c]
 
             if t == 0:
                 draw.ellipse((cx - DOT_RADIUS, cy - DOT_RADIUS, cx + DOT_RADIUS, cy + DOT_RADIUS), fill = color)
             else:
                 if t in [2, 3, 6]: # top
-                    draw.line((cx, cy, cx, cy - GRID_SIZE/2), fill = color)
+                    draw.rectangle((cx-LINE_RADIUS, cy - GRID_SIZE/2, cx+LINE_RADIUS, cy), fill = color)
                 if t in [1, 3, 4]: # right
-                    draw.line((cx, cy, cx + GRID_SIZE/2, cy), fill = color)
+                    draw.rectangle((cx, cy-LINE_RADIUS, cx + GRID_SIZE/2, cy+LINE_RADIUS), fill = color)
                 if t in [2, 4, 5]: # bottom
-                    draw.line((cx, cy, cx, cy + GRID_SIZE/2), fill = color)
+                    draw.rectangle((cx-LINE_RADIUS, cy, cx+LINE_RADIUS, cy + GRID_SIZE/2), fill = color)
                 if t in [1, 5, 6]: # left
-                    draw.line((cx, cy, cx - GRID_SIZE/2, cy), fill = color)
+                    draw.rectangle((cx - GRID_SIZE/2, cy-LINE_RADIUS, cx, cy+LINE_RADIUS), fill = color)
 
             if showdist:
                 draw.text((cx-1, cy), str(d), fill = 'black')
