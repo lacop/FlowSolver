@@ -95,8 +95,8 @@ def parse_image(path, pathcrop):
     xmarks = sorted(merge_buckets(xbuckets).keys())
     ymarks = sorted(merge_buckets(ybuckets).keys())
 
-    pprint(xmarks)
-    pprint(ymarks)
+    #pprint(xmarks)
+    #pprint(ymarks)
 
     # Figure out coordinates
     minx, miny, maxx, maxy = avg([xmarks[0], xmarks[1]]), avg([ymarks[0], ymarks[1]]), avg([xmarks[-1], xmarks[-2]]), avg([ymarks[-1], ymarks[-2]])
@@ -167,11 +167,11 @@ def parse_image(path, pathcrop):
     level.colors = len(color_map)
 
     img = img.crop((xmarks[0], ymarks[0], xmarks[-1], ymarks[-1]))
-    img = img.resize((int(img.size[0]/2), int(img.size[1]/2)))
+    img = img.resize((int(img.size[0]*0.75), int(img.size[1]*0.75)))
     img.show()
     img.save(pathcrop)
 
-    return (level, {v:k for k,v in color_map.items()})
+    return (level, {v:k for k,v in color_map.items()}, xmarks, ymarks)
 
 def solve_image(path, dist = False):
     pathparts = splitext(path)
@@ -182,7 +182,7 @@ def solve_image(path, dist = False):
     pathlvl = '%s.lvl.txt' % pathparts[0]
     
     print('Parsing image ...')
-    level, color_map = parse_image(path, pathcrop)
+    level, color_map, xmarks, ymarks = parse_image(path, pathcrop)
 
     level.write_to_file(pathlvl)
 
@@ -213,6 +213,8 @@ def solve_image(path, dist = False):
     img = get_solution(level, val, dist, color_map)
     img.show()
     img.save(pathsol)
+    
+    return val, xmarks, ymarks
 
 def main():
     #solve_image('screenshots/2013-02-05 17.59.29.png')
