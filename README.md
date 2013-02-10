@@ -1,10 +1,32 @@
 FlowSolver
 ==========
 
-Using SAT solvers to generate solutions for [Flow](https://play.google.com/store/apps/details?id=com.bigduckgames.flow&hl=en) levels.
+Using SAT solvers to generate solutions for [Flow](https://play.google.com/store/apps/details?id=com.bigduckgames.flow&hl=en) levels. Can solve selected level on device automatically using [MonkeyRunner](http://developer.android.com/tools/help/monkeyrunner_concepts.html).
 
-Examples
-========
+The code is quite messy and slow, but it works.
+
+Example run
+===========
+
+For a fully autonomous solving of a level on screen run
+
+    python solve_monkey.py
+
+This will perform the following steps:
+
+- Use MonkeyRunner to take a [screenshot](https://raw.github.com/lacop/FlowSolver/master/screenshots/2013-02-10_16-18-48.png).
+- Extract the level from the screenshot.
+- Setup SAT clauses and write them to file.
+- Run a SAT solver on the file to generate a solution.
+- Display the [solution](https://raw.github.com/lacop/FlowSolver/master/screenshots/2013-02-10_16-18-48.sol.png).
+- Finally, use MonkeyRunner to send a [series of drag events](https://raw.github.com/lacop/FlowSolver/master/screenshots/2013-02-10_16-18-48.sol_path.txt) to execute the solution on the device.
+
+![solution](https://raw.github.com/lacop/FlowSolver/master/screenshots/2013-02-10_16-18-48.sol.png)
+
+Old examples
+============
+
+These are old examples using [MiniSAT](http://minisat.se/). By using [glucose](http://www.lri.fr/~simon/?page=glucose) you can achieve much better speeds.
 
 ![level_8_150](https://raw.github.com/lacop/FlowSolver/master/levels/flow_free_8_8_150.sol.png)
 
