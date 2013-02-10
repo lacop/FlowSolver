@@ -22,6 +22,21 @@ class Level:
 
         self.colors = len(keys)
 
+    def write_to_file(self, path):
+        file = open(path, 'w')
+        for l in self.tiles:
+            first = True
+            for r in l:
+                if not first:
+                    file.write('\t')
+                first = False
+                if r is None:
+                    file.write('.')
+                else:
+                    file.write(str(r))
+            file.write('\n')
+        file.close()
+
     def valid(self, x, y):
         return x < self.cols and x >= 0 and y < self.rows and y >= 0
 

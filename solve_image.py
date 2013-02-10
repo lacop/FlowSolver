@@ -13,7 +13,8 @@ from os.path import splitext
 from gc import collect
 from subprocess import call
 
-SAT_PATH = 'work/MiniSat_v1.14_cygwin.exe'
+#SAT_PATH = 'work/MiniSat_v1.14_cygwin.exe'
+SAT_PATH = './glucose_static'
 
 def merge_buckets(buckets):
     while True:
@@ -65,14 +66,15 @@ def avg_color(cl):
     # :/ zipwith+map
     return (avg([c[0] for c in cl]), avg([c[1] for c in cl]), avg([c[2] for c in cl]))
 
-def parse_image(path):
+def parse_image(path, pathcrop):
     img = Image.open(path)
     pix = img.load()
 
     # TODO proper line detection instead of color matching
-    border_color = (131, 97, 66) # brown
+    #border_color = (131, 97, 66) # brown
     #border_color = (123, 125, 66) # green
-    border_threshold = 32
+    border_color = pix[2, 180]
+    border_threshold = 128
 
     xbuckets = defaultdict(int)
     ybuckets = defaultdict(int)
@@ -154,33 +156,39 @@ def parse_image(path):
 
         level.tiles[j][i] = id
 
-        """ImageDraw.Draw(img).ellipse((x-w/5-1, y-w/5-1, x+w/5+1, y+w/5+1), fill = 'black')
+        ImageDraw.Draw(img).ellipse((x-w/5-1, y-w/5-1, x+w/5+1, y+w/5+1), fill = 'black')
         ImageDraw.Draw(img).ellipse((x-w/5, y-w/5, x+w/5, y+w/5), fill = 'white')
         ImageDraw.Draw(img).text((x+1, y), str(id), fill = 'black')
         ImageDraw.Draw(img).text((x-1, y), str(id), fill = 'black')
         ImageDraw.Draw(img).text((x, y+1), str(id), fill = 'black')
         ImageDraw.Draw(img).text((x, y-1), str(id), fill = 'black')
-        ImageDraw.Draw(img).text((x, y), str(id), fill = 'white')"""
+        ImageDraw.Draw(img).text((x, y), str(id), fill = 'white')
 
     level.colors = len(color_map)
 
     img = img.crop((xmarks[0], ymarks[0], xmarks[-1], ymarks[-1]))
+    img = img.resize((int(img.size[0]/2), int(img.size[1]/2)))
     img.show()
+    img.save(pathcrop)
 
     return (level, {v:k for k,v in color_map.items()})
 
 def solve_image(path, dist = False):
-    print('Parsing image ...')
-    level, color_map = parse_image(path)
-
-    print('Generating clauses ...')
-    clauses = sat_get_clauses(level, dist)
-    print('Got %d clauses' % len(clauses))
-
     pathparts = splitext(path)
     pathin = '%s.sat_in.txt' % pathparts[0]
     pathout = '%s.sat_out.txt' % pathparts[0]
     pathsol = '%s.sol.png' % pathparts[0]
+    pathcrop = '%s.crop.png' % pathparts[0]
+    pathlvl = '%s.lvl.txt' % pathparts[0]
+    
+    print('Parsing image ...')
+    level, color_map = parse_image(path, pathcrop)
+
+    level.write_to_file(pathlvl)
+
+    print('Generating clauses ...')
+    clauses = sat_get_clauses(level, dist)
+    print('Got %d clauses' % len(clauses))
 
     print('Writing to file ...')
     map = sat_write_clauses(clauses, pathin)
@@ -215,7 +223,8 @@ def main():
     #solve_image('screenshots/2013-02-05 19.23.25.png')
     #solve_image('screenshots/2013-02-08 19.25.35.png')
     #solve_image('screenshots/2013-02-08 19.25.46.png')
-    solve_image('screenshots/2013-02-08 19.25.59.png')
+    #solve_image('screenshots/2013-02-08 19.25.59.png')
+    solve_image('screenshots/2013-02-10_14-49-12.png')
 
 if __name__ == '__main__':
     main()
