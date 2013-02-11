@@ -3,6 +3,8 @@ FlowSolver
 
 Using SAT solvers to generate solutions for [Flow](https://play.google.com/store/apps/details?id=com.bigduckgames.flow&hl=en) levels. Can solve selected level on device automatically using [MonkeyRunner](http://developer.android.com/tools/help/monkeyrunner_concepts.html).
 
+www.youtube.com/watch?v=NxKmFT4qsQM
+
 The code is quite messy and slow, but it works.
 
 Example run
